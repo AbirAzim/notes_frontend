@@ -13,6 +13,7 @@ function LoginForm() {
   const [error, setError] = useState('');
   const [notVerified, setNotVerified] = useState(false);
   const [info, setInfo] = useState('');
+  const [resending, setResending] = useState(false);
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -33,6 +34,7 @@ function LoginForm() {
   }
 
   async function handleResend() {
+    setResending(true);
     setError('');
     setInfo('');
     try {
@@ -41,6 +43,8 @@ function LoginForm() {
       setNotVerified(false);
     } catch (err) {
       setError(errorMessage(err));
+    } finally {
+      setResending(false);
     }
   }
 
@@ -57,8 +61,8 @@ function LoginForm() {
       </label>
       {error && <p className="error">{error}</p>}
       {notVerified && (
-        <button type="button" className="secondary" onClick={handleResend}>
-          Resend verification email
+        <button type="button" className="secondary" onClick={handleResend} disabled={resending}>
+          {resending ? 'Sending…' : 'Resend verification email'}
         </button>
       )}
       {info && <p className="success">{info}</p>}

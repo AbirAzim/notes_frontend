@@ -48,7 +48,7 @@ export default function GroupsPage() {
     <>
       <h1>Interest groups</h1>
 
-      <form className="card filter" onSubmit={handleSearch}>
+      <form className="card" onSubmit={handleSearch}>
         <label>
           Filter by interests (comma separated)
           <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="chess, reading" />

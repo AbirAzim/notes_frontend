@@ -25,6 +25,7 @@ export default function AdminPage() {
   // Role changes: show the new value right away, undo it if the API refuses.
   const [pendingRoles, setPendingRoles] = useState<Record<string, Role>>({});
   const [actionError, setActionError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   function clearPending(id: string) {
     setPendingRoles((prev) => {
@@ -50,6 +51,7 @@ export default function AdminPage() {
   async function deleteUser(user: User) {
     if (!confirm(`Delete ${user.name}? Their notes and posts will be deleted too.`)) return;
     setActionError('');
+    setDeletingId(user._id);
     try {
       await api<void>(`/admin/users/${user._id}`, { method: 'DELETE' });
       if (users.data && users.data.data.length === 1 && usersPage > 1) setUsersPage(usersPage - 1);
@@ -57,6 +59,8 @@ export default function AdminPage() {
       notes.reload();
     } catch (err) {
       setActionError(errorMessage(err));
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -118,8 +122,8 @@ export default function AdminPage() {
                         <td className="row-actions">
                           <Link to={`/users/${u._id}/posts`}>Posts</Link>
                           {u._links?.delete && (
-                            <button className="danger" onClick={() => deleteUser(u)}>
-                              Delete
+                            <button className="danger" onClick={() => deleteUser(u)} disabled={deletingId === u._id}>
+                              {deletingId === u._id ? 'Deleting…' : 'Delete'}
                             </button>
                           )}
                         </td>
@@ -164,7 +168,7 @@ export default function AdminPage() {
                         )}
                       </td>
                       <td>{new Date(n.createdAt).toLocaleString()}</td>
-                      <td>{shorten(n.content ?? '')}</td>
+                      <td className="wrap">{shorten(n.content ?? '')}</td>
                     </tr>
                   ))}
                 </tbody>

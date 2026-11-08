@@ -151,6 +151,12 @@ button:disabled {
   color: #1a7f37;
 }
 
+/* Page-level messages (not inside a form) */
+.container > .error,
+.container > .success {
+  margin-bottom: 16px;
+}
+
 .muted {
   color: #6b7280;
 }
@@ -177,6 +183,7 @@ table {
 
 th,
 td {
+  white-space: nowrap; /* keep rows on one line; .table-wrap scrolls instead */
   text-align: left;
   padding: 8px 10px;
   border-bottom: 1px solid #e3e5e8;
@@ -209,7 +216,7 @@ textarea {
 /* Profile */
 .details {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: 4px 16px;
   margin: 0;
 }
@@ -220,6 +227,7 @@ textarea {
 
 .details dd {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 /* Groups */
@@ -254,4 +262,9 @@ td select {
   align-items: center;
   gap: 12px;
   white-space: nowrap;
+}
+
+td.wrap {
+  white-space: normal;
+  min-width: 240px;
 }

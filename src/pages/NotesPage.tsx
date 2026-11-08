@@ -11,6 +11,7 @@ export default function NotesPage() {
   const [page, setPage] = useState(1);
   const { data: result, loading, error, reload } = useFetch<Paginated<Note>>(`/notes?page=${page}&limit=${LIMIT}`);
   const [deleteError, setDeleteError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Form (editingId = null means "create")
   const [title, setTitle] = useState('');
@@ -59,6 +60,7 @@ export default function NotesPage() {
   async function handleDelete(note: Note) {
     if (!confirm(`Delete "${note.title}"?`)) return;
     setDeleteError('');
+    setDeletingId(note._id);
     try {
       await api<void>(`/notes/${note._id}`, { method: 'DELETE' });
       if (editingId === note._id) resetForm();
@@ -67,6 +69,8 @@ export default function NotesPage() {
       else reload();
     } catch (err) {
       setDeleteError(errorMessage(err));
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -119,8 +123,8 @@ export default function NotesPage() {
                   </button>
                 )}
                 {note._links.delete && (
-                  <button className="danger" onClick={() => handleDelete(note)}>
-                    Delete
+                  <button className="danger" onClick={() => handleDelete(note)} disabled={deletingId === note._id}>
+                    {deletingId === note._id ? 'Deleting…' : 'Delete'}
                   </button>
                 )}
               </div>

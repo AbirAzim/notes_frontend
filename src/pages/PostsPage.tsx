@@ -15,6 +15,7 @@ function PostList({ userId, isMine }: { userId: string; isMine: boolean }) {
     `/users/${userId}/posts?page=${page}&limit=${LIMIT}`,
   );
   const [deleteError, setDeleteError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Form (editingId = null means "create")
   const [title, setTitle] = useState('');
@@ -62,6 +63,7 @@ function PostList({ userId, isMine }: { userId: string; isMine: boolean }) {
   async function handleDelete(post: Post) {
     if (!confirm(`Delete "${post.title}"?`)) return;
     setDeleteError('');
+    setDeletingId(post._id);
     try {
       await api<void>(`/posts/${post._id}`, { method: 'DELETE' });
       if (editingId === post._id) resetForm();
@@ -69,6 +71,8 @@ function PostList({ userId, isMine }: { userId: string; isMine: boolean }) {
       else reload();
     } catch (err) {
       setDeleteError(errorMessage(err));
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -124,8 +128,8 @@ function PostList({ userId, isMine }: { userId: string; isMine: boolean }) {
                   </button>
                 )}
                 {post._links.delete && (
-                  <button className="danger" onClick={() => handleDelete(post)}>
-                    Delete
+                  <button className="danger" onClick={() => handleDelete(post)} disabled={deletingId === post._id}>
+                    {deletingId === post._id ? 'Deleting…' : 'Delete'}
                   </button>
                 )}
               </div>

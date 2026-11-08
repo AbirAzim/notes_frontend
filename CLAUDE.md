@@ -1,6 +1,6 @@
 # Notes Frontend — project brief
 
-Follow this brief in every session. Phases 1–4 are done (2 = /notes, 3 = /profile, /groups, /posts, /users/:id/posts, 4 = /admin); build later phases only when asked.
+Follow this brief in every session. Phases 1–4 and the final pass are done (2 = /notes, 3 = /profile, /groups, /posts, /users/:id/posts, 4 = /admin).
 Each phase's original brief is kept in `Phases/` (phase1.md, phase2.md, …). When asked to do a phase, read its file there.
 
 ## Stack
