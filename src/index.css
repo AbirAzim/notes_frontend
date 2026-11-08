@@ -231,3 +231,27 @@ textarea {
   margin: 0;
   padding: 0;
 }
+
+/* Admin */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+table {
+  min-width: 640px; /* .table-wrap scrolls sideways below this */
+  border: 1px solid #e3e5e8;
+}
+
+td select {
+  width: auto;
+  padding: 4px 6px;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}

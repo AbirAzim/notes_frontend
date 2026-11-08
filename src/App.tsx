@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
-import { RequireAuth } from './components/RequireAuth';
+import { RequireAdmin, RequireAuth } from './components/RequireAuth';
+import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import GroupsPage from './pages/GroupsPage';
 import NotesPage from './pages/NotesPage';
@@ -23,7 +24,9 @@ export default function App() {
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/posts" element={<PostsPage />} />
           <Route path="/users/:id/posts" element={<PostsPage />} />
-          {/* Later phase: /admin inside <RequireAdmin /> */}
+          <Route element={<RequireAdmin />}>
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
         </Route>
       </Route>
 
