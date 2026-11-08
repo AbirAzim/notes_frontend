@@ -1,6 +1,6 @@
 # Notes Frontend — project brief
 
-Follow this brief in every session. Phase 1 is done; build later phases only when asked.
+Follow this brief in every session. Phases 1–2 are done (Phase 2 = full /notes page); build later phases only when asked.
 Each phase's original brief is kept in `Phases/` (phase1.md, phase2.md, …). When asked to do a phase, read its file there.
 
 ## Stack

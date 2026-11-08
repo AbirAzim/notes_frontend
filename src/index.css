@@ -181,3 +181,27 @@ td {
   padding: 8px 10px;
   border-bottom: 1px solid #e3e5e8;
 }
+
+/* Notes */
+h3 {
+  margin: 0 0 8px;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.small {
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+textarea {
+  resize: vertical;
+}
