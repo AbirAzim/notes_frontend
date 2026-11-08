@@ -1,58 +1,23 @@
-import { useEffect, useState, type FormEvent } from 'react';
-import { api } from '../api';
+import { useState, type SubmitEvent } from 'react';
+import { api, errorMessage } from '../api';
 import Pager from '../components/Pager';
 import type { Note, Paginated } from '../types';
+import { useFetch } from '../useFetch';
 
 const LIMIT = 10;
 
-function errorMessage(err: unknown): string {
-  return err instanceof Error ? err.message : 'Something went wrong';
-}
-
 export default function NotesPage() {
-  // List state
+  // List
   const [page, setPage] = useState(1);
-  const [result, setResult] = useState<Paginated<Note> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [listError, setListError] = useState('');
-  const [reloadKey, setReloadKey] = useState(0); // bump to refetch the current page
+  const { data: result, loading, error, reload } = useFetch<Paginated<Note>>(`/notes?page=${page}&limit=${LIMIT}`);
+  const [deleteError, setDeleteError] = useState('');
 
-  // Form state (editingId = null means "create")
+  // Form (editingId = null means "create")
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
-
-  useEffect(() => {
-    let ignore = false; // skip the result if page changed before the request finished
-    api<Paginated<Note>>(`/notes?page=${page}&limit=${LIMIT}`)
-      .then((res) => {
-        if (!ignore) setResult(res);
-      })
-      .catch((err) => {
-        if (!ignore) setListError(errorMessage(err));
-      })
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [page, reloadKey]);
-
-  // Every refetch goes through these two, so "loading" is set before the effect runs.
-  function goToPage(newPage: number) {
-    setLoading(true);
-    setListError('');
-    setPage(newPage);
-  }
-
-  function reload() {
-    setLoading(true);
-    setListError('');
-    setReloadKey((k) => k + 1);
-  }
 
   function resetForm() {
     setTitle('');
@@ -69,7 +34,7 @@ export default function NotesPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     setSaving(true);
     setFormError('');
@@ -81,7 +46,7 @@ export default function NotesPage() {
         await api<Note>('/notes', { method: 'POST', body: { title, content } });
         // New notes are listed newest first, so show page 1.
         if (page === 1) reload();
-        else goToPage(1);
+        else setPage(1);
       }
       resetForm();
     } catch (err) {
@@ -93,14 +58,15 @@ export default function NotesPage() {
 
   async function handleDelete(note: Note) {
     if (!confirm(`Delete "${note.title}"?`)) return;
+    setDeleteError('');
     try {
       await api<void>(`/notes/${note._id}`, { method: 'DELETE' });
       if (editingId === note._id) resetForm();
       // If that was the last note on this page, go back one page.
-      if (result && result.data.length === 1 && page > 1) goToPage(page - 1);
+      if (result && result.data.length === 1 && page > 1) setPage(page - 1);
       else reload();
     } catch (err) {
-      setListError(errorMessage(err));
+      setDeleteError(errorMessage(err));
     }
   }
 
@@ -130,11 +96,13 @@ export default function NotesPage() {
       </form>
 
       <h1>My notes</h1>
-      {listError && <p className="error">{listError}</p>}
+      {deleteError && <p className="error">{deleteError}</p>}
+      {error && <p className="error">{error.message}</p>}
       {loading && <p className="muted">Loading…</p>}
-      {!loading && !listError && result?.data.length === 0 && <p className="muted">No notes yet</p>}
+      {!loading && !error && result?.data.length === 0 &&<p className="muted">No notes yet</p>}
 
       {!loading &&
+        !error &&
         result?.data.map((note) => (
           <article key={note._id} className="card">
             <h3>{note.title}</h3>
@@ -160,7 +128,7 @@ export default function NotesPage() {
           </article>
         ))}
 
-      {result && <Pager page={page} totalPages={result.totalPages} onChange={goToPage} />}
+      {result && <Pager page={page} totalPages={result.totalPages} onChange={setPage} />}
     </>
   );
 }

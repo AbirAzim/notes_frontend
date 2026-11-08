@@ -66,3 +66,8 @@ export interface LoginResponse {
 export interface MessageResponse {
   message: string;
 }
+
+// GET /users/:id/posts
+export interface UserPosts extends Paginated<Post> {
+  user: { _id: string; name: string };
+}

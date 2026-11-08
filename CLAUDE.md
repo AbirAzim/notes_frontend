@@ -1,6 +1,6 @@
 # Notes Frontend — project brief
 
-Follow this brief in every session. Phases 1–2 are done (Phase 2 = full /notes page); build later phases only when asked.
+Follow this brief in every session. Phases 1–3 are done (2 = /notes, 3 = /profile, /groups, /posts, /users/:id/posts); build later phases only when asked.
 Each phase's original brief is kept in `Phases/` (phase1.md, phase2.md, …). When asked to do a phase, read its file there.
 
 ## Stack
@@ -46,6 +46,7 @@ Endpoints:
 - src/components/RequireAuth.tsx (redirects to /login) and RequireAdmin (redirects to /notes when not ADMIN).
 - src/components/Layout.tsx: top nav with NavLink to Notes, Profile, Interest groups, My posts, Admin (only if ADMIN), plus the user's name and Logout; <Outlet/> below.
 - src/components/Pager.tsx: Prev / "Page X of Y" / Next.
+- src/useFetch.ts: `useFetch<T>(path)` → { data, error, loading, reload } for GET requests. Use it for page data; call api() directly for create/update/delete.
 - Never use dangerouslySetInnerHTML.
 - Every page shows loading, empty and error states. Dates via toLocaleString().
 - One src/index.css: clean, minimal, mobile-friendly (max-width container, cards, forms, buttons, error/success messages, responsive tables). No CSS frameworks.

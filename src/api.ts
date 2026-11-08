@@ -61,3 +61,8 @@ export async function api<T>(path: string, { method = 'GET', body }: Options = {
 
   return data as T;
 }
+
+// Turn any caught error into text we can show the user.
+export function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : 'Something went wrong';
+}

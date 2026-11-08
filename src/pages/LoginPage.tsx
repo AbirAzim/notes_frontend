@@ -1,12 +1,8 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { api, ApiError } from '../api';
+import { api, ApiError, errorMessage } from '../api';
 import { useAuth } from '../auth';
 import type { LoginResponse, MessageResponse } from '../types';
-
-function errorMessage(err: unknown): string {
-  return err instanceof Error ? err.message : 'Something went wrong';
-}
 
 function LoginForm() {
   const { login } = useAuth();
@@ -18,7 +14,7 @@ function LoginForm() {
   const [notVerified, setNotVerified] = useState(false);
   const [info, setInfo] = useState('');
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -81,7 +77,7 @@ function RegisterForm() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
