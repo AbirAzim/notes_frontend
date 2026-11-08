@@ -1,15 +1,102 @@
-import { useState } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { api, errorMessage } from '../api';
 import { useAuth } from '../auth';
 import Pager from '../components/Pager';
-import type { Note, Paginated, Role, User } from '../types';
+import type { CreateUserBody, Note, Paginated, Role, User } from '../types';
 import { useFetch } from '../useFetch';
 
 const LIMIT = 10;
 
 function shorten(text: string, max = 100): string {
   return text.length > max ? text.slice(0, max) + '…' : text;
+}
+
+function CreateUserForm({ onCreated }: { onCreated: () => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState<Role>('USER');
+  const [interests, setInterests] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    setSaving(true);
+    setError('');
+    setSuccess('');
+
+    const body: CreateUserBody = { name, email, password, role };
+    // "chess, , reading " → ["chess", "reading"]; leave the field out if nothing is left
+    const list = interests
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s !== '');
+    if (list.length > 0) body.interests = list;
+
+    try {
+      await api<User>('/admin/users', { method: 'POST', body });
+      setSuccess(`User created. A verification email was sent to ${email}.`);
+      setName('');
+      setEmail('');
+      setPassword('');
+      setRole('USER');
+      setInterests('');
+      onCreated();
+    } catch (err) {
+      setError(errorMessage(err)); // keep what was typed
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form className="card" onSubmit={handleSubmit}>
+      <h2>Create user</h2>
+      <div className="form-grid">
+        <label>
+          Name
+          <input value={name} onChange={(e) => setName(e.target.value)} minLength={2} maxLength={60} required />
+        </label>
+        <label>
+          Email
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </label>
+        <label>
+          Password (8–72 characters)
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            minLength={8}
+            maxLength={72}
+            autoComplete="new-password"
+            required
+          />
+        </label>
+        <label>
+          Role
+          <select value={role} onChange={(e) => setRole(e.target.value as Role)}>
+            <option value="USER">USER</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </label>
+        <label>
+          Interests (optional, comma separated)
+          <input value={interests} onChange={(e) => setInterests(e.target.value)} placeholder="chess, reading" />
+        </label>
+      </div>
+      {error && <p className="error">{error}</p>}
+      {success && <p className="success">{success}</p>}
+      <div className="actions">
+        <button type="submit" disabled={saving}>
+          {saving ? 'Creating…' : 'Create user'}
+        </button>
+      </div>
+    </form>
+  );
 }
 
 export default function AdminPage() {
@@ -80,6 +167,13 @@ export default function AdminPage() {
 
       {tab === 'users' && (
         <>
+          <CreateUserForm
+            onCreated={() => {
+              // Show page 1 so the new user is visible.
+              if (usersPage === 1) users.reload();
+              else setUsersPage(1);
+            }}
+          />
           {users.error && <p className="error">{users.error.message}</p>}
           {users.loading && <p className="muted">Loading…</p>}
           {!users.loading && !users.error && users.data?.data.length === 0 && <p className="muted">No users</p>}

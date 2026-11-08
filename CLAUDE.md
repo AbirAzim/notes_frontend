@@ -34,6 +34,8 @@ Endpoints:
 - GET/PATCH/DELETE /notes/:id → Note { _id, owner, title, content, createdAt, updatedAt, _links }
 - POST /posts {title(1-200), body(1-10000)} → 201 post
 - GET/PATCH/DELETE /posts/:id → Post { _id, author, title, body, createdAt, updatedAt, _links }
+- POST /admin/users {name(2-60), email, password(8-72), role?: 'USER'|'ADMIN' (default USER), interests?: string[]} → 201 user
+  The new user has emailVerified: false and gets a verification email. 409 if the email already exists. 400 on validation errors. Admin only.
 - GET /admin/users?page&limit → list of users with _links (no `delete` link on the admin's own row)
 - PATCH /admin/users/:id {name?, role?, interests?} → user (an admin can't demote themselves)
 - DELETE /admin/users/:id → 204 (also deletes their notes and posts)

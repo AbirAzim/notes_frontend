@@ -1,6 +1,6 @@
 # Notes Frontend
 
-A small React + TypeScript (Vite) frontend for the Notes REST API: sign up, verify email, log in, write private notes and public posts, browse users by interest, and (for admins) manage users and see all notes.
+A small React + TypeScript (Vite) frontend for the Notes REST API: sign up, verify email, log in, write private notes and public posts, browse users by interest, and (for admins) create and manage users and see all notes.
 
 - **Live app:** https://notes-frontend-gilt-mu.vercel.app
 - **Backend API:** https://note-backend.myftp.org/api/v1
@@ -17,7 +17,7 @@ A small React + TypeScript (Vite) frontend for the Notes REST API: sign up, veri
 | `/groups`           | logged in | Users grouped by interest, filterable (filter + page kept in URL)  |
 | `/posts`            | logged in | Your posts: create, edit, delete                                   |
 | `/users/:id/posts`  | logged in | Another user's posts                                               |
-| `/admin`            | admin     | Users tab (change role, delete) and All notes tab                  |
+| `/admin`            | admin     | Users tab (create user, change role, delete) and All notes tab     |
 
 Edit/Delete buttons appear only when the API returns `_links.update` / `_links.delete`.
 

@@ -71,3 +71,12 @@ export interface MessageResponse {
 export interface UserPosts extends Paginated<Post> {
   user: { _id: string; name: string };
 }
+
+// POST /admin/users (admin only)
+export interface CreateUserBody {
+  name: string;
+  email: string;
+  password: string;
+  role?: Role;
+  interests?: string[];
+}

@@ -268,3 +268,10 @@ td.wrap {
   white-space: normal;
   min-width: 240px;
 }
+
+/* Multi-field forms: columns on wide screens, one column on phones */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
